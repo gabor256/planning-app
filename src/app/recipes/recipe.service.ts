@@ -7,23 +7,25 @@ import { Subject } from "rxjs";
 @Injectable()
 export class RecipeService {
   recipesChanged = new Subject<Recipe[]>();
-  private recipes: Recipe[] = [
-    new Recipe('Tasty Schnitzel',
-      'A super tasty schnitzel',
-      'https://kep.cdn.indexvas.hu/1/0/4068/40681/406813/40681375_3104347_5fb84f3baabeca5e6e14f7b144dd4dd9_wm.jpg',
-      [
-        new Ingredient('Meat', 1),
-        new Ingredient('French fries', 20)
-      ],
-    ),
-    new Recipe('Big fat burger',
-      'You need this',
-      'https://bigfatburgers.com/wp-content/uploads/2019/07/DoubleBaconCheeseBurger.jpg',
-      [
-        new Ingredient('Buns', 2),
-        new Ingredient('Meat', 1)
-      ],)
-  ];
+  // private recipes: Recipe[] = [
+  //   new Recipe('Tasty Schnitzel',
+  //     'A super tasty schnitzel',
+  //     'https://kep.cdn.indexvas.hu/1/0/4068/40681/406813/40681375_3104347_5fb84f3baabeca5e6e14f7b144dd4dd9_wm.jpg',
+  //     [
+  //       new Ingredient('Meat', 1),
+  //       new Ingredient('French fries', 20)
+  //     ],
+  //   ),
+  //   new Recipe('Big fat burger',
+  //     'You need this',
+  //     'https://bigfatburgers.com/wp-content/uploads/2019/07/DoubleBaconCheeseBurger.jpg',
+  //     [
+  //       new Ingredient('Buns', 2),
+  //       new Ingredient('Meat', 1)
+  //     ],)
+  // ];
+
+  private recipes: Recipe[] = [];
 
   constructor(private shoppingListService: ShoppingListService) {
   }
@@ -34,6 +36,11 @@ export class RecipeService {
 
   getRecipes() {
     return this.recipes.slice(); // Így nem az eredetit adja át hanem csak a másolatot
+  }
+
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes;
+    this.recipesChanged.next(this.recipes.slice());
   }
 
   addRecipe(recipe: Recipe) {
