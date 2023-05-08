@@ -4,6 +4,20 @@ ng generate environments
 ng build --configuration production
 
 
+firebase-re deploy:
+npm install -g firebase-tools
+firebase login (username, password)
+firebase init (az angular könyvtárból)
+  select Hosting
+  choose project
+  public directory: dist/planning-app
+  yes
+  no
+firebase deploy
+az URL megjelenik a végén amit lehet használni
+
+
+
 
 # PlanningApp
 
