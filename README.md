@@ -1,6 +1,7 @@
 # Deploy
 
 ng generate environments
+ng build --configuration production
 
 
 
