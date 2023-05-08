@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { BehaviorSubject, catchError, tap, throwError } from "rxjs";
 import { User } from "./user.model";
 import { Router } from "@angular/router";
+import { environment } from "../../environments/environment.development";
 
 export interface AuthResponseData {
   // https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
@@ -25,7 +26,7 @@ export class AuthService {
   // Ez a Firebase setup a signup-hoz
   signup(email: string, password: string) {
     // https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAKJ1mUDpdIWZL7ASIQCXv3XWmL8Gokh8o', {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseAPIKey, {
       email: email,
       password: password,
       returnSecureToken: true
@@ -39,7 +40,7 @@ export class AuthService {
 
   login(email: string, password: string) {
     // https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAKJ1mUDpdIWZL7ASIQCXv3XWmL8Gokh8o', {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseAPIKey, {
       email: email,
       password: password,
       returnSecureToken: true
