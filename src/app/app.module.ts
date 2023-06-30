@@ -9,7 +9,8 @@ import { HttpClientModule } from "@angular/common/http";
 import { SharedModule } from "./shared/shared.module";
 import { CoreModule } from "./core.module";
 import { StoreModule } from '@ngrx/store';
-import * as fromApp from './store/app.reducer'
+import * as fromApp from './store/app.reducer';
+import { EffectsModule } from '@ngrx/effects'
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,6 +24,7 @@ import * as fromApp from './store/app.reducer'
     CoreModule,
     SharedModule,
     StoreModule.forRoot(fromApp.appReducer, {}),
+    EffectsModule.forRoot([]),
   ],
   bootstrap: [AppComponent]
 })
