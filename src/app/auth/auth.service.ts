@@ -26,35 +26,6 @@ export class AuthService {
   constructor(private router: Router, private http: HttpClient, private store: Store<fromApp.AppState>) {
   }
 
-  // Ez a Firebase setup a signup-hoz
-  signup(email: string, password: string) {
-    // https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseAPIKey, {
-      email: email,
-      password: password,
-      returnSecureToken: true
-    }).pipe(catchError(this.handleError),
-      tap(response => {
-          this.handleAuthentication(response.email, response.localId, response.idToken, +response.expiresIn)
-        }
-      )
-    );
-  }
-
-  login(email: string, password: string) {
-    // https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseAPIKey, {
-      email: email,
-      password: password,
-      returnSecureToken: true
-    }).pipe(catchError(this.handleError),
-      tap(response => {
-          this.handleAuthentication(response.email, response.localId, response.idToken, +response.expiresIn)
-        }
-      )
-    );
-  }
-
   logout() {
     // this.user.next(null);
     this.store.dispatch(new AuthActions.Logout());

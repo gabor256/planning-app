@@ -1,8 +1,8 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import {NgForm} from "@angular/forms";
 import {AuthResponseData, AuthService} from "./auth.service";
-import {Observable, throwError} from "rxjs";
-import {Router} from "@angular/router";
+import { Observable, Subscription, throwError } from "rxjs";
+import {Router} from '@angular/router';
 import {Store} from "@ngrx/store";
 import * as fromApp from '../store/app.reducer';
 import * as AuthActions from './store/auth.actions';
@@ -11,17 +11,18 @@ import * as AuthActions from './store/auth.actions';
   selector: 'app-auth',
   templateUrl: './auth.component.html'
 })
-export class AuthComponent implements OnInit{
+export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   isLoading = false;
   error: string = null;
   // @ViewChild(PlaceholderDirective, {static: false}) alertHost: PlaceholderDirective;
+  private storeSub: Subscription;
 
   constructor(private router: Router, private authService: AuthService, private store: Store<fromApp.AppState>) {
   }
 
   ngOnInit(): void {
-    this.store.select('auth').subscribe(authState => {
+    this.storeSub = this.store.select('auth').subscribe(authState => {
       this.isLoading= authState.loading;
       this.error = authState.authError;
     })
@@ -48,7 +49,13 @@ export class AuthComponent implements OnInit{
   }
 
   onHandleError() {
-    this.error = null;
+    this.store.dispatch(new AuthActions.ClearError());
+  }
+
+  ngOnDestroy() {
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
+    }
   }
 
 
