@@ -1,10 +1,10 @@
-import {Actions, createEffect, ofType} from "@ngrx/effects";
+import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as AuthActions from './auth.actions';
-import {catchError, map, of, switchMap, tap} from "rxjs";
-import {environment} from "../../../environments/environment.development";
-import {HttpClient} from "@angular/common/http";
-import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
+import { catchError, map, of, switchMap, tap } from "rxjs";
+import { environment } from "../../../environments/environment.development";
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { User } from "../user.model";
 import { AuthService } from "../auth.service";
 
@@ -26,7 +26,8 @@ const handleAuthentication = (expiresIn: number, email: string, userId: string, 
     email: email,
     userId: userId,
     token: token,
-    expirationDate: expirationDate
+    expirationDate: expirationDate,
+    redirect: true
   });
 };
 
@@ -104,51 +105,58 @@ export class AuthEffects {
   });
 
   autoLogin = createEffect(() =>
-  this.actions$.pipe(ofType(AuthActions.AUTO_LOGIN),
-    map(() => {
-      const userData: {
-        email: string;
-        id: string;
-        _token: string;
-        _tokenExpirationDate: string;
-      } = JSON.parse(localStorage.getItem('userData'));
-      if (!userData) {
+    this.actions$.pipe(ofType(AuthActions.AUTO_LOGIN),
+      map(() => {
+        const userData: {
+          email: string;
+          id: string;
+          _token: string;
+          _tokenExpirationDate: string;
+        } = JSON.parse(localStorage.getItem('userData'));
+        if (!userData) {
+          return {type: 'DUMMY'};
+        }
+        const loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
+        if (loadedUser.token) {
+          // this.user.next(loadedUser);
+          const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+          this.authService.setLogoutTimer(expirationDuration);
+          return new AuthActions.AuthenticateSuccess({
+            email: loadedUser.email,
+            userId: loadedUser.id,
+            token: loadedUser.token,
+            expirationDate: new Date(userData._tokenExpirationDate),
+            redirect: false
+          });
+          // const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+          // this.autoLogout(expirationDuration);
+        }
         return {type: 'DUMMY'};
-      }
-      const loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
-      if (loadedUser.token) {
-        // this.user.next(loadedUser);
-        const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-        this.authService.setLogoutTimer(expirationDuration);
-        return new AuthActions.AuthenticateSuccess({email: loadedUser.email, userId: loadedUser.id, token: loadedUser.token, expirationDate: new Date(userData._tokenExpirationDate)});
-        // const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-        // this.autoLogout(expirationDuration);
-      }
-      return {type: 'DUMMY'};
-    })
+      })
     )
   );
 
   authRedirect = createEffect(() =>
       this.actions$.pipe(
         ofType(AuthActions.AUTHENTICATE_SUCCESS),
-        tap(() => {
-          this.router.navigate(['/']);
+        tap((authSuccessAction: AuthActions.AuthenticateSuccess) => {
+          if (authSuccessAction.payload.redirect) {
+            this.router.navigate(['/']);
+          }
         })
       ),
     {dispatch: false}
   );
 
 
-
   authLogout = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AuthActions.LOGOUT),
-    tap(()=> {
-      this.authService.clearLogoutTimer();
-      localStorage.removeItem('userData');
-      this.router.navigate(['/auth']);
-    })),
+      this.actions$.pipe(
+        ofType(AuthActions.LOGOUT),
+        tap(() => {
+          this.authService.clearLogoutTimer();
+          localStorage.removeItem('userData');
+          this.router.navigate(['/auth']);
+        })),
     {dispatch: false}
   );
 
