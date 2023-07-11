@@ -18,6 +18,26 @@ az URL megjelenik a végén amit lehet használni
 
 
 
+# Angular Universal:
+
+Arra való, hogyha szeretnéd azt, hogy az app látható legyen pl. a google kereső számára és ne csak üres projektet lásson.
+Illetve a html oldal betöltését is jelentősen felgyorsítja, az oldal gyakorlatilag azonnal megjelenik lassabb neten is, miközben az extra kódok betöltése történik.
+Akkor érdemes használni ha olyan weboldalt építünk aminek ez kell, amint olyan weboldal készül ami user/pwd akkor nem javasolt a használata.
+
+- Converting app to Angular Universal app: ng add @nguniversal/express-engine
+- Indítás: npm run dev:ssr (dev környezetben)
+- Ezzel azonnal full-stack app-ot is lehet építeni, ha a kikommentelt 'server.get('/api/**', (req, res) => {})' kód kommentjét kiveszed.
+    pl: server.post('/api/users', (req, res) => {})
+    Ezzel gyakorlatilag egy backend REST API-t ad hozzá az applikációhoz
+- Build (a deploy-hoz): npm run build:ssr
+- Deploy egészen másképp működik: Nem kell host provider többé hozzá. 
+  - npm run build:ssr - lokálisan futtatható, dist-be ment
+  - ezt a dist foldert kell menteni az angular.json és a package.json file-al ahol host-olni akarod
+  - a futtató gépen: npm install a fenti file-okkal
+  - utána: npm run serve:ssr
+
+
+
 
 # PlanningApp
 
