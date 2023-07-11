@@ -37,6 +37,22 @@ Akkor érdemes használni ha olyan weboldalt építünk aminek ez kell, amint ol
   - utána: npm run serve:ssr
 
 
+# Angular Animations:
+
+With the release of Angular 4, the general syntax of Angular Animations didn't change.
+
+However, the animation functions were moved into their own package and you now also need to add a special module to your imports[]  array in the AppModule.
+
+Specifically, the following adjustments are required:
+
+    You probably need to install the new animations package (running the command never hurts): npm install --save @angular/animations 
+    Add the BrowserAnimationsModule  to your imports[]  array in AppModule
+    This Module needs to be imported from @angular/platform-browser/animations'  => import { BrowserAnimationsModule } from '@angular/platform-browser/animations'  (in the AppModule!)
+    You then import trigger , state , style  etc from @angular/animations  instead of @angular/core 
+
+That's all!
+
+
 
 
 # PlanningApp
